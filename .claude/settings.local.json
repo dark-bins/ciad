@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Daniel/Desktop/nueva update/**)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run lint)",
+      "Bash(docker:*)",
+      "Bash(psql:*)",
+      "Bash(powershell:*)",
+      "Bash(node:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(curl:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(timeout:*)",
+      "Bash(del datachatweb.db)",
+      "Bash(cmd //c:*)",
+      "Bash(cmd /c:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run db:query:*)",
+      "Bash(tasklist)",
+      "Bash(npx kill-port:*)",
+      "Bash(cat:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

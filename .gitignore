@@ -1,0 +1,49 @@
+# Node
+node_modules/
+**/node_modules/
+
+# Build outputs
+backend/dist/
+frontend/dist/
+
+# Environment files
+backend/.env
+frontend/.env
+.env
+.env.local
+.env.production
+
+# Database
+*.db
+*.sqlite
+backend/data/
+
+# Telegram sessions
+*.session
+telegram_session*
+
+# Logs
+logs/
+*.log
+backend/logs/
+
+# Local data
+backend/downloads/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+
+# Scripts temp
+backend/generate-password.js
+backend/check-users.js
+backend/fix-null-ids.js
+backend/migrate-plans.js
+backend/check-db-schema.js
