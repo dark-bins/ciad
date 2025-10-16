@@ -95,6 +95,7 @@ router.post(
       console.error("Error en registro:", error);
       res.status(500).json({ error: "Error al registrar usuario" });
     }
+    */
   }
 );
 
