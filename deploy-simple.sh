@@ -3,6 +3,11 @@
 # Ejecutar en el VPS: bash deploy-simple.sh
 
 set -e
+
+echo "🔄 Actualizando código desde GitHub..."
+cd /var/www/ciad
+git pull origin main
+
 cd /var/www/ciad/backend
 
 echo "🔨 Compilando backend..."
