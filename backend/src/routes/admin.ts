@@ -270,7 +270,7 @@ router.get("/metrics", async (_req: AuthRequest, res: Response): Promise<void> =
         .sort()
         .reverse();
 
-      if (errorFiles.length > 0) {
+      if (errorFiles.length > 0 && errorFiles[0]) {
         const latestErrorFile = path.join(logsDir, errorFiles[0]);
         const content = fs.readFileSync(latestErrorFile, 'utf-8');
         const lines = content.trim().split('\n').slice(-10); // Últimos 10 errores
@@ -307,7 +307,7 @@ router.get("/logs/:type", async (req: AuthRequest, res: Response): Promise<void>
     const logsDir = path.join(process.cwd(), 'logs');
     const validTypes = ['application', 'error', 'metrics'];
 
-    if (!validTypes.includes(type)) {
+    if (!type || !validTypes.includes(type)) {
       res.status(400).json({ error: 'Tipo de log inválido' });
       return;
     }
@@ -317,7 +317,7 @@ router.get("/logs/:type", async (req: AuthRequest, res: Response): Promise<void>
       .sort()
       .reverse();
 
-    if (files.length === 0) {
+    if (files.length === 0 || !files[0]) {
       res.json({ logs: [], message: 'No hay logs disponibles' });
       return;
     }
