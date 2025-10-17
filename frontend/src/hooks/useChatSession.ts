@@ -6,6 +6,19 @@ import { ChatMessage, CommandExecution, SessionState } from "../types";
 
 type Socket = any; // Tipo temporal mientras WebSocket está deshabilitado
 
+// Polyfill para crypto.randomUUID (compatible con navegadores antiguos)
+const generateUUID = (): string => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback: generar UUID v4 manualmente
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
 type CommandResultHandler = (execution: CommandExecution) => void;
 
 interface UseChatSessionOptions {
@@ -14,7 +27,7 @@ interface UseChatSessionOptions {
 
 const mapProviderMessages = (execution: CommandExecution): ChatMessage[] =>
   execution.result.messages.map((message) => ({
-    id: `${execution.id}-${message.id ?? crypto.randomUUID()}`,
+    id: `${execution.id}-${message.id ?? generateUUID()}`,
     author: message.author ?? "provider",
     body: message.body,
     attachments: message.attachments,
@@ -122,12 +135,12 @@ export const useChatSession = ({ onExecution }: UseChatSessionOptions = {}) => {
 
       const timestamp = new Date().toISOString();
       const userMessage: ChatMessage = {
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         author: "user",
         body: input,
         timestamp,
       };
-      const pendingId = crypto.randomUUID();
+      const pendingId = generateUUID();
       const pendingMessage: ChatMessage = {
         id: pendingId,
         author: "system",
