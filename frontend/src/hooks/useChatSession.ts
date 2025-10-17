@@ -45,6 +45,11 @@ export const useChatSession = ({ onExecution }: UseChatSessionOptions = {}) => {
 
   const connectSocket = useCallback(
     (sessionId: string) => {
+      // WebSocket temporalmente deshabilitado - los comandos funcionan por HTTP
+      console.log("WebSocket deshabilitado - usando HTTP para comandos");
+      setError(null);
+
+      /* WEBSOCKET DESHABILITADO TEMPORALMENTE
       if (socketRef.current) {
         socketRef.current.disconnect();
       }
@@ -68,6 +73,7 @@ export const useChatSession = ({ onExecution }: UseChatSessionOptions = {}) => {
       });
 
       socketRef.current = socket;
+      */
     },
     [onExecution],
   );
@@ -141,7 +147,11 @@ export const useChatSession = ({ onExecution }: UseChatSessionOptions = {}) => {
         const execution = data.execution;
         setSession((prev) => (prev ? { ...prev, history: [...prev.history, execution] } : prev));
 
-        setMessages((prev) => prev.filter((msg) => msg.id !== pendingId));
+        // Eliminar mensaje pending y agregar respuesta del proveedor
+        setMessages((prev) => [
+          ...prev.filter((msg) => msg.id !== pendingId),
+          ...mapProviderMessages(execution)
+        ]);
 
         onExecution?.(execution);
       } catch (cause) {
