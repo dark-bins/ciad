@@ -1,0 +1,61 @@
+services:
+  # Backend API
+  - type: web
+    name: ciad-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ciad-db
+          property: connectionString
+      - key: TELEGRAM_API_ID
+        value: 20450582
+      - key: TELEGRAM_API_HASH
+        value: e146872423c00526f40442469669e8ce
+      - key: TELEGRAM_PHONE
+        value: +584129253094
+      - key: TELEGRAM_SESSION_STRING
+        value: 1AQAOMTQ5LjE1NC4xNzUuNTYBu50ajyIrQJ2TOYix8feyx1jBxBHg4MIbRA2gOywMmrW6NlJi/FQ3T2sZvt9IMMgMPcjIKJwIfG26lC6CqkkGLHP9wODxLjvSFtIvDzenRVDJ8nn7uXUjRfQZ0q3gw4VgjRB72rS5z/oAF9EGGeZX7vGQLSPfWsFVQsS/DJSZnbKjZWq1T2UFF8tUJ3oWSsBHLeIbTopQOnjQiO2SwsLBB/S20WGNxxWiV0UaQTd0W1IWji57+7B1flsOQtr1wHpVh8JVkWeromL0aYDZNCUQX2DwTum2DiVyuNw8m+2rVimH5atLOEsv5Wst1g4i+0AYFHSujj1GYQE8kOdoxbecW6c=
+      - key: TELEGRAM_PROVIDER_BOT
+        value: SHKAINFORMATIONASXBOT
+      - key: TELEGRAM_BOT_USERNAME
+        value: @DELUXEDATAA_BOT
+      - key: TELEGRAM_SESSION_FILE
+        value: telegram_session
+      - key: CORS_ORIGIN
+        value: https://ciad-frontend.onrender.com
+
+  # Frontend
+  - type: web
+    name: ciad-frontend
+    env: static
+    region: oregon
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://ciad-backend.onrender.com/api
+      - key: VITE_SOCKET_URL
+        value: https://ciad-backend.onrender.com
+
+databases:
+  - name: ciad-db
+    plan: free
+    databaseName: ciad
+    user: ciaduser
