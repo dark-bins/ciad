@@ -14,9 +14,9 @@ export interface ChatSessionRecord {
 export const upsertChatSession = async (userId: string, sessionKey: string): Promise<ChatSessionRecord> => {
   const result = await query<ChatSessionRecord>(
     `INSERT INTO chat_sessions (user_id, session_id, is_active, last_activity)
-     VALUES ($1, $2, 1, CURRENT_TIMESTAMP)
+     VALUES ($1, $2, true, CURRENT_TIMESTAMP)
      ON CONFLICT (session_id)
-     DO UPDATE SET last_activity = CURRENT_TIMESTAMP, is_active = 1
+     DO UPDATE SET last_activity = CURRENT_TIMESTAMP, is_active = true
      RETURNING *`,
     [userId, sessionKey],
   );
