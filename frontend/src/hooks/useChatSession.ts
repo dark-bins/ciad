@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import { env } from "../config/env";
+// import { io, Socket } from "socket.io-client";
+// import { env } from "../config/env";
 import { http } from "../lib/http";
 import { ChatMessage, CommandExecution, SessionState } from "../types";
+
+type Socket = any; // Tipo temporal mientras WebSocket está deshabilitado
 
 type CommandResultHandler = (execution: CommandExecution) => void;
 
@@ -44,9 +46,9 @@ export const useChatSession = ({ onExecution }: UseChatSessionOptions = {}) => {
   const socketRef = useRef<Socket | null>(null);
 
   const connectSocket = useCallback(
-    (sessionId: string) => {
+    (_sessionId: string) => {
       // WebSocket temporalmente deshabilitado - los comandos funcionan por HTTP
-      console.log("WebSocket deshabilitado - usando HTTP para comandos");
+      console.log("WebSocket deshabilitado - usando HTTP para comandos", _sessionId);
       setError(null);
 
       /* WEBSOCKET DESHABILITADO TEMPORALMENTE
