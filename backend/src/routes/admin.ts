@@ -52,16 +52,16 @@ router.get("/stats", async (_req: AuthRequest, res: Response): Promise<void> => 
     }>(
       `SELECT
          COUNT(*) as total_commands,
-         COUNT(CASE WHEN success = 1 THEN 1 END) as successful_commands,
+         COUNT(CASE WHEN success = true THEN 1 END) as successful_commands,
          COALESCE(SUM(credits_used), 0) as total_credits_used
        FROM command_executions
-       WHERE executed_at > datetime('now', '-24 hours')`,
+       WHERE executed_at > NOW() - INTERVAL '24 hours'`,
     );
 
     const sessionStats = await query<{ active_sessions: number }>(
       `SELECT COUNT(*) as active_sessions
          FROM chat_sessions
-        WHERE is_active = 1`,
+        WHERE is_active = true`,
     );
 
     const commandsSummary =
