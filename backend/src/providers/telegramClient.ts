@@ -76,7 +76,13 @@ export class DirectTelegramClient {
 
   private registerBotListener(botUsername: string) {
     const normalized = botUsername.toLowerCase();
-    if (!this.client || this.listeningBots.has(normalized)) {
+    if (!this.client) {
+      logger.warn(`No se puede registrar listener para @${botUsername} - cliente no conectado`);
+      return;
+    }
+
+    if (this.listeningBots.has(normalized)) {
+      logger.debug(`Listener ya existe para @${botUsername}`);
       return;
     }
 
@@ -85,7 +91,7 @@ export class DirectTelegramClient {
       new NewMessage({ fromUsers: [botUsername] }),
     );
     this.listeningBots.add(normalized);
-    logger.info(`Listener registrado para @${botUsername}`);
+    logger.info(`✅ Listener registrado para @${botUsername}`);
   }
 
   private async handleProviderMessage(event: NewMessageEvent) {
@@ -95,7 +101,9 @@ export class DirectTelegramClient {
       const caption = (message as { caption?: string }).caption ?? null;
       const text = rawMessage ?? caption ?? null;
 
-      logger.info(`📩 Mensaje recibido del bot - Tiene media: ${Boolean(message.media)}, Texto: ${text?.slice(0, 50)}...`);
+      // Log del remitente
+      const sender = (message as any).fromId;
+      logger.info(`📩 Mensaje recibido del bot (sender: ${JSON.stringify(sender)}) - Tiene media: ${Boolean(message.media)}, Texto: ${text?.slice(0, 50)}...`);
 
       if (text) {
         const normalized = text.toLowerCase();
