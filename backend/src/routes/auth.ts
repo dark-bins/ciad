@@ -35,14 +35,6 @@ router.post(
       .withMessage("La contraseña debe tener al menos 6 caracteres"),
   ],
   async (req: Request, res: Response): Promise<void> => {
-    // 🔒 BETA CERRADA - Registro desactivado
-    res.status(403).json({
-      error: "Registro desactivado",
-      message: "Estamos en beta cerrada. Contacta al administrador para obtener acceso."
-    });
-    return;
-
-    /* COMENTADO PARA BETA CERRADA - Descomentar para abrir registro público
     try {
       // Validar entrada
       const errors = validationResult(req);
@@ -95,7 +87,6 @@ router.post(
       console.error("Error en registro:", error);
       res.status(500).json({ error: "Error al registrar usuario" });
     }
-    */
   }
 );
 
