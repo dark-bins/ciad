@@ -12,6 +12,7 @@ import {
   updateLastLogin,
 } from "../models/User";
 import { generateToken, authenticate, AuthRequest } from "../middleware/authenticate";
+import { query } from "../config/database";
 
 const router = Router();
 

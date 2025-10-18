@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { query } from "../config/database-postgres";
-import { logger } from "../config/logger";
+import { query } from "../config/database";
+import { logger } from "../core/logger";
 
 export interface AuthRequest extends Request {
   user?: {
@@ -34,7 +34,7 @@ export const validateSingleIP = async (req: AuthRequest, res: Response, next: Ne
       return next();
     }
 
-    const lastIP = result[0].last_ip;
+    const lastIP = result[0]?.last_ip;
 
     // If this is the first login or IP hasn't changed, update and continue
     if (!lastIP || lastIP === clientIP) {
