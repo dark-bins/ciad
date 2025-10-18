@@ -151,7 +151,7 @@ export class DirectTelegramClient {
       // Fallback: Si no hay reply_to, buscar la sesión más reciente (solo si hay una)
       if (!targetSessionId) {
         const activeSessions = Array.from(this.responseHandlers.keys());
-        if (activeSessions.length === 1) {
+        if (activeSessions.length === 1 && activeSessions[0]) {
           targetSessionId = activeSessions[0];
           logger.info(`⚠️ Sin reply_to - Usando única sesión activa: ${targetSessionId.slice(0, 8)}...`);
         } else if (activeSessions.length > 1) {
