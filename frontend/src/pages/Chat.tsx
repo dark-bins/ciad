@@ -60,6 +60,7 @@ export const Chat = () => {
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [activeProvider, setActiveProvider] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -171,6 +172,76 @@ export const Chat = () => {
 
   return (
     <div className="app-container">
+      {/* Mobile Menu Button */}
+      <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)} aria-label="Abrir menú">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
+      {/* Mobile Menu Overlay */}
+      <div className={`mobile-menu-overlay ${mobileMenuOpen ? "open" : ""}`} onClick={() => setMobileMenuOpen(false)} />
+
+      {/* Mobile Menu */}
+      <nav className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}>
+        <div className="mobile-menu-header">
+          <div className="brand">
+            <img src="/ciad-logo.png" alt="CIAD" className="brand-logo-img" style={{ width: "50px", height: "50px" }} />
+          </div>
+          <button className="mobile-menu-close" onClick={() => setMobileMenuOpen(false)} aria-label="Cerrar menú">
+            ✕
+          </button>
+        </div>
+
+        {user && (
+          <div className="user-card">
+            <div className="user-avatar">{user.username.charAt(0).toUpperCase()}</div>
+            <div className="user-info">
+              <h3>{user.username}</h3>
+              <span className={`user-badge ${user.role === "admin" ? "premium" : ""}`}>
+                {user.role === "admin" ? "Admin" : user.role === "premium" ? "Premium" : "Usuario"}
+              </span>
+            </div>
+            <div className="user-stats">
+              <div className="stat-item">
+                <span className="stat-label">Plan</span>
+                <span className="stat-value">{user.plan}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Créditos</span>
+                <span className="stat-value">{user.credits}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="mobile-menu-actions">
+          {isAdmin && (
+            <button
+              className="mobile-menu-btn-action"
+              onClick={() => {
+                navigate("/admin");
+                setMobileMenuOpen(false);
+              }}
+            >
+              <span>📊</span>
+              Panel Administrativo
+            </button>
+          )}
+          <button
+            className="mobile-menu-btn-action logout"
+            onClick={async () => {
+              await logout();
+              navigate("/login");
+              setMobileMenuOpen(false);
+            }}
+          >
+            <span>🚪</span>
+            Cerrar Sesión
+          </button>
+        </div>
+      </nav>
+
       <aside className="sidebar">
         <div className="brand">
           <img src="/ciad-logo.png" alt="CIAD" className="brand-logo-img" />
