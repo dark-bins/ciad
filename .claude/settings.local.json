@@ -26,7 +26,17 @@
       "Bash(cat:*)",
       "Bash(git init:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(ssh root@62.169.21.154 \"apt update && apt install -y curl git\")",
+      "Bash(ssh root@62.169.21.154 \"node --version || (curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt install -y nodejs)\")",
+      "Bash(ssh root@62.169.21.154 \"apt install -y postgresql postgresql-contrib nginx && npm install -g pm2\")",
+      "Bash(ssh root@62.169.21.154 \"sudo -u postgres psql -c \"\"CREATE DATABASE ciad;\"\" && sudo -u postgres psql -c \"\"CREATE USER ciaduser WITH PASSWORD ''ciad_prod_2025_secure'';\"\" && sudo -u postgres psql -c \"\"GRANT ALL PRIVILEGES ON DATABASE ciad TO ciaduser;\"\" && sudo -u postgres psql -c \"\"ALTER DATABASE ciad OWNER TO ciaduser;\"\"\")",
+      "Bash(ssh root@62.169.21.154 \"mkdir -p /var/www && cd /var/www && rm -rf ciad && git clone https://github.com/dark-bins/ciad.git\")",
+      "Bash(ssh root@62.169.21.154 \"cat > /var/www/ciad/backend/.env << ''EOF''\nNODE_ENV=production\nPORT=4000\nDATABASE_URL=postgresql://ciaduser:ciad_prod_2025_secure@localhost:5432/ciad\nJWT_SECRET=ciad_jwt_production_super_secure_key_2025_change_this\nCORS_ORIGIN=http://62.169.21.154\n\n# Telegram credentials\nTELEGRAM_API_ID=20450582\nTELEGRAM_API_HASH=e146872423c00526f40442469669e8ce\nTELEGRAM_PHONE=+584129253094\nTELEGRAM_SESSION_STRING=1AQAOMTQ5LjE1NC4xNzUuNTYBu50ajyIrQJ2TOYix8feyx1jBxBHg4MIbRA2gOywMmrW6NlJi/FQ3T2sZvt9IMMgMPcjIKJwIfG26lC6CqkkGLHP9wODxLjvSFtIvDzenRVDJ8nn7uXUjRfQZ0q3gw4VgjRB72rS5z/oAF9EGGeZX7vGQLSPfWsFVQsS/DJSZnbKjZWq1T2UFF8tUJ3oWSsBHLeIbTopQOnjQiO2SwsLBB/S20WGNxxWiV0UaQTd0W1IWji57+7B1flsOQtr1wHpVh8JVkWeromL0aYDZNCUQX2DwTum2DiVyuNw8m+2rVimH5atLOEsv5Wst1g4i+0AYFHSujj1GYQE8kOdoxbecW6c=\nTELEGRAM_PROVIDER_BOT=SHKAINFORMATIONASXBOT\nTELEGRAM_BOT_USERNAME=@DELUXEDATAA_BOT\nTELEGRAM_SESSION_FILE=telegram_session\nEOF\n\")",
+      "Bash(ssh:*)"
     ],
     "deny": [],
     "ask": []

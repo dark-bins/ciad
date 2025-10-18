@@ -202,8 +202,8 @@ export const getUserStats = async () => {
        COUNT(*) as total_users,
        COUNT(CASE WHEN role = 'admin' THEN 1 END) as admin_count,
        COUNT(CASE WHEN role = 'premium' THEN 1 END) as premium_count,
-       COUNT(CASE WHEN is_active = 1 THEN 1 END) as active_users,
-       COUNT(CASE WHEN last_login > datetime('now', '-24 hours') THEN 1 END) as active_24h
+       COUNT(CASE WHEN is_active = true THEN 1 END) as active_users,
+       COUNT(CASE WHEN last_login > NOW() - INTERVAL '24 hours' THEN 1 END) as active_24h
      FROM users`,
   );
 

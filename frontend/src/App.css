@@ -160,9 +160,9 @@ body {
   gap: 0.25rem;
   padding: 0.9rem 1.1rem;
   border-radius: 14px;
-  background: rgba(37, 99, 235, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.25);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.25));
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .session-pill .pill-label {
@@ -555,11 +555,69 @@ code {
   }
 
   .workspace {
-    padding: 1.5rem;
+    padding: 0.75rem;
+  }
+
+  .workspace-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .session-info {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+
+  .session-meta {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .session-pill {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .command-hub {
+    margin: 0.75rem 0;
+    padding: 1rem;
+  }
+
+  .command-hub-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .command-search {
+    width: 100%;
+  }
+
+  .command-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
   }
 
   .bubble {
     max-width: 100%;
+  }
+
+  .composer {
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
+  .composer input {
+    font-size: 0.9rem;
+    padding: 0.9rem 1.2rem 0.9rem 2.5rem;
+  }
+
+  .composer button {
+    padding: 0.9rem 1.2rem;
+    font-size: 0.85rem;
   }
 }
 

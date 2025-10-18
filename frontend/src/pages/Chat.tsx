@@ -256,6 +256,18 @@ export const Chat = () => {
               <span className="pill-label">Categorías</span>
               <span className="pill-value">{categories.length}</span>
             </div>
+            {user && (
+              <>
+                <div className="session-pill">
+                  <span className="pill-label">Plan</span>
+                  <span className="pill-value">{user.plan}</span>
+                </div>
+                <div className="session-pill">
+                  <span className="pill-label">Créditos</span>
+                  <span className="pill-value">{user.credits}</span>
+                </div>
+              </>
+            )}
           </div>
         </header>
 
