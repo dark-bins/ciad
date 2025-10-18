@@ -10,6 +10,7 @@ import {
 } from "../models/User";
 import { getAllConfig, updateMultipleConfig } from "../models/SystemConfig";
 import { authenticate, requireAdmin, AuthRequest } from "../middleware/authenticate";
+import { validateSingleIP } from "../middleware/ipValidation";
 import { query } from "../config/database";
 import { logger, UsageStats } from "../core/logger";
 import fs from "fs";
@@ -18,6 +19,7 @@ import path from "path";
 const router = Router();
 
 router.use(authenticate);
+router.use(validateSingleIP);
 router.use(requireAdmin);
 
 router.get("/users", async (_req: AuthRequest, res: Response): Promise<void> => {

@@ -130,8 +130,16 @@ router.post(
         return;
       }
 
-      // Actualizar último login
+      // Get client IP
+      const clientIP =
+        (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+        (req.headers["x-real-ip"] as string) ||
+        req.socket.remoteAddress ||
+        "unknown";
+
+      // Actualizar último login y IP
       await updateLastLogin(user.id);
+      await query("UPDATE users SET last_ip = $1 WHERE id = $2", [clientIP, user.id]);
 
       // Generar token
       const token = generateToken(user);

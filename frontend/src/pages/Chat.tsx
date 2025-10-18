@@ -4,6 +4,7 @@ import { useChatSession } from "../hooks/useChatSession";
 import { ChatMessage } from "../types";
 import { useAuth } from "../context/useAuth";
 import { useCommandCatalog } from "../hooks/useCommandCatalog";
+import { useInactivityTimeout } from "../hooks/useInactivityTimeout";
 import "../App.css";
 
 const formatTime = (timestamp: string) => {
@@ -146,6 +147,9 @@ export const Chat = () => {
     await logout();
     navigate("/login");
   };
+
+  // Auto logout after 5 minutes of inactivity
+  useInactivityTimeout(handleLogout, 5 * 60 * 1000);
 
   const handleSendCommand = async (event: FormEvent) => {
     event.preventDefault();

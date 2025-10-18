@@ -1,6 +1,7 @@
 import { useState, FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import { SimpleCaptcha } from "../components/SimpleCaptcha";
 import "./Auth.css";
 
 export const Login = () => {
@@ -10,6 +11,7 @@ export const Login = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [captchaValid, setCaptchaValid] = useState(false);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -74,7 +76,9 @@ export const Login = () => {
             />
           </div>
 
-          <button type="submit" className="btn-primary" disabled={loading}>
+          <SimpleCaptcha onVerify={setCaptchaValid} />
+
+          <button type="submit" className="btn-primary" disabled={loading || !captchaValid}>
             {loading ? "Iniciando..." : "Iniciar sesion"}
           </button>
         </form>

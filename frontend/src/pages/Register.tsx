@@ -1,6 +1,7 @@
 import { useState, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import { SimpleCaptcha } from "../components/SimpleCaptcha";
 import "./Auth.css";
 
 export const Register = () => {
@@ -14,6 +15,7 @@ export const Register = () => {
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [captchaValid, setCaptchaValid] = useState(false);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -92,7 +94,9 @@ export const Register = () => {
             />
           </div>
 
-          <button type="submit" className="btn-primary" disabled={loading}>
+          <SimpleCaptcha onVerify={setCaptchaValid} />
+
+          <button type="submit" className="btn-primary" disabled={loading || !captchaValid}>
             {loading ? "Registrando..." : "Crear cuenta"}
           </button>
         </form>

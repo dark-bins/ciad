@@ -23,10 +23,19 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  (error: AxiosError<{ error?: string; message?: string }>) => {
     if (error.response?.status === 401) {
+      const errorCode = error.response.data?.error;
+      const errorMessage = error.response.data?.message;
+
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user");
+
+      // Show alert if session expired due to IP change
+      if (errorCode === "session_expired" && errorMessage) {
+        alert(errorMessage);
+      }
+
       window.location.href = "/login";
     }
     return Promise.reject(error);

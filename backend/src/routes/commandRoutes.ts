@@ -5,6 +5,7 @@ import { SocketGateway } from "../websocket/socketGateway";
 import { ProviderRegistry } from "../services/providerRegistry";
 import { getCommandCatalog } from "../config/commandCatalog";
 import { authenticate, AuthRequest } from "../middleware/authenticate";
+import { validateSingleIP } from "../middleware/ipValidation";
 
 export const createCommandRouter = (
   commandService: CommandService,
