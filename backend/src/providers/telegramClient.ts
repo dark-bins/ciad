@@ -27,6 +27,7 @@ export class DirectTelegramClient {
   private readonly responseHandlers = new Map<string, (messages: TelegramMessage[]) => void>();
   private readonly pendingMessages = new Map<string, TelegramMessage[]>();
   private readonly listeningBots = new Set<string>();
+  private readonly sentMessageIds = new Map<number, string>(); // Mapea message_id -> sessionId
 
   constructor(config: {
     apiId: number;
@@ -135,15 +136,38 @@ export class DirectTelegramClient {
         }
       }
 
-      const activeSession = Array.from(this.responseHandlers.keys())[0];
-      if (activeSession) {
-        if (!this.pendingMessages.has(activeSession)) {
-          this.pendingMessages.set(activeSession, []);
+      // NUEVA LÓGICA: Buscar sesión por reply_to_msg_id
+      let targetSessionId: string | undefined;
+
+      // Intentar obtener el ID del mensaje al que responde
+      const replyToMsgId = (message as any).replyTo?.replyToMsgId;
+      if (replyToMsgId) {
+        targetSessionId = this.sentMessageIds.get(replyToMsgId);
+        if (targetSessionId) {
+          logger.info(`🎯 Mensaje vinculado a sesión ${targetSessionId.slice(0, 8)}... via reply_to ${replyToMsgId}`);
         }
-        this.pendingMessages.get(activeSession)!.push(telegramMessage);
-        logger.info(`✅ Mensaje agregado a la sesion ${activeSession.slice(0, 8)}... (total: ${this.pendingMessages.get(activeSession)!.length})`);
+      }
+
+      // Fallback: Si no hay reply_to, buscar la sesión más reciente (solo si hay una)
+      if (!targetSessionId) {
+        const activeSessions = Array.from(this.responseHandlers.keys());
+        if (activeSessions.length === 1) {
+          targetSessionId = activeSessions[0];
+          logger.info(`⚠️ Sin reply_to - Usando única sesión activa: ${targetSessionId.slice(0, 8)}...`);
+        } else if (activeSessions.length > 1) {
+          logger.warn(`⚠️ ${activeSessions.length} sesiones activas pero sin reply_to - mensaje descartado para evitar confusión`);
+          return;
+        }
+      }
+
+      if (targetSessionId) {
+        if (!this.pendingMessages.has(targetSessionId)) {
+          this.pendingMessages.set(targetSessionId, []);
+        }
+        this.pendingMessages.get(targetSessionId)!.push(telegramMessage);
+        logger.info(`✅ Mensaje agregado a sesión ${targetSessionId.slice(0, 8)}... (total: ${this.pendingMessages.get(targetSessionId)!.length})`);
       } else {
-        logger.warn(`⚠️ No hay sesión activa para recibir el mensaje`);
+        logger.warn(`⚠️ No se encontró sesión válida para el mensaje`);
       }
     } catch (error) {
       logger.error("Error procesando mensaje del proveedor de Telegram", { error });
@@ -190,7 +214,15 @@ export class DirectTelegramClient {
 
       this.client!
         .sendMessage(botUsername, { message: command })
-        .then(() => this.awaitResponses(sessionId, command, resolve))
+        .then((sentMessage) => {
+          // Guardar el message_id para poder vincular respuestas
+          const messageId = (sentMessage as any).id;
+          if (messageId) {
+            this.sentMessageIds.set(messageId, sessionId);
+            logger.info(`📤 Mensaje enviado con ID ${messageId} vinculado a sesión ${sessionId.slice(0, 8)}...`);
+          }
+          this.awaitResponses(sessionId, command, resolve);
+        })
         .catch((error) => {
           logger.error(`Error enviando comando a @${botUsername}`, { error });
           this.responseHandlers.delete(sessionId);
@@ -198,6 +230,24 @@ export class DirectTelegramClient {
           reject(error);
         });
     });
+  }
+
+  private cleanupSession(sessionId: string): void {
+    this.responseHandlers.delete(sessionId);
+    this.pendingMessages.delete(sessionId);
+
+    // Limpiar message_ids asociados a esta sesión
+    const keysToDelete: number[] = [];
+    for (const [msgId, sessId] of this.sentMessageIds.entries()) {
+      if (sessId === sessionId) {
+        keysToDelete.push(msgId);
+      }
+    }
+    keysToDelete.forEach(msgId => this.sentMessageIds.delete(msgId));
+
+    if (keysToDelete.length > 0) {
+      logger.debug(`🧹 Limpieza: ${keysToDelete.length} message_ids eliminados de sesión ${sessionId.slice(0, 8)}...`);
+    }
   }
 
   private awaitResponses(
@@ -211,8 +261,7 @@ export class DirectTelegramClient {
     const intervalMs = 500;
     const timeout = setTimeout(() => {
       const messages = this.pendingMessages.get(sessionId) ?? [];
-      this.responseHandlers.delete(sessionId);
-      this.pendingMessages.delete(sessionId);
+      this.cleanupSession(sessionId);
 
       if (messages.length === 0) {
         logger.warn(`⏱️ Timeout (60s) - Sin respuesta del proveedor para ${command}`);
@@ -234,8 +283,7 @@ export class DirectTelegramClient {
         if (stableChecks >= maxStableChecks) {
           clearTimeout(timeout);
           clearInterval(interval);
-          this.responseHandlers.delete(sessionId);
-          this.pendingMessages.delete(sessionId);
+          this.cleanupSession(sessionId);
           logger.info(`✅ Respuestas completas y estables (${messages.length}) para ${command}`);
           resolve(messages);
         }
