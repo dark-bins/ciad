@@ -181,7 +181,7 @@ export const fetchSessionHistory = async (sessionKey: string): Promise<CommandEx
        ce.arguments,
        cs.user_id,
        ce.executed_at as completed_at,
-       datetime(ce.executed_at, '-1 second') as started_at
+       (ce.executed_at - INTERVAL '1 second') as started_at
      FROM command_executions ce
      JOIN chat_sessions cs ON ce.session_id = cs.id
     WHERE cs.session_id = $1
