@@ -111,7 +111,14 @@ export class DirectTelegramClient {
 
       // Log del remitente
       const sender = (message as any).fromId;
-      logger.info(`📩 Mensaje recibido del bot (sender: ${JSON.stringify(sender)}) - Tiene media: ${Boolean(message.media)}, Texto: ${text?.slice(0, 50)}...`);
+      const msgId = (message as any).id;
+      const replyTo = (message as any).replyTo?.replyToMsgId;
+      logger.info(`📩 Mensaje recibido del bot`);
+      logger.info(`   Sender: ${JSON.stringify(sender)}`);
+      logger.info(`   Message ID: ${msgId}`);
+      logger.info(`   Reply To: ${replyTo}`);
+      logger.info(`   Media: ${Boolean(message.media)}`);
+      logger.info(`   Texto: ${text?.slice(0, 100)}`);
 
       if (text) {
         const normalized = text.toLowerCase();
