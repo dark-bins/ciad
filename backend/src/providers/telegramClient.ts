@@ -62,7 +62,7 @@ export class DirectTelegramClient {
         },
       });
 
-      this.registerBotListener(this.providerBotUsername);
+      await this.registerBotListener(this.providerBotUsername);
 
       logger.info("Cliente Telegram conectado");
       logger.info(`Escuchando mensajes de @${this.providerBotUsername}`);
@@ -74,8 +74,8 @@ export class DirectTelegramClient {
     }
   }
 
-  private registerBotListener(botUsername: string) {
-    const normalized = botUsername.toLowerCase();
+  private async registerBotListener(botUsername: string) {
+    const normalized = botUsername.toLowerCase().replace('@', '');
     if (!this.client) {
       logger.warn(`No se puede registrar listener para @${botUsername} - cliente no conectado`);
       return;
@@ -86,12 +86,20 @@ export class DirectTelegramClient {
       return;
     }
 
-    this.client.addEventHandler(
-      (event: NewMessageEvent) => this.handleProviderMessage(event),
-      new NewMessage({ fromUsers: [botUsername] }),
-    );
-    this.listeningBots.add(normalized);
-    logger.info(`✅ Listener registrado para @${botUsername}`);
+    try {
+      // Resolver el username a un entity (usuario/bot)
+      const entity = await this.client.getEntity(botUsername);
+      logger.info(`✅ Entity resuelto para @${botUsername}: ${(entity as any).id}`);
+
+      this.client.addEventHandler(
+        (event: NewMessageEvent) => this.handleProviderMessage(event),
+        new NewMessage({ fromUsers: [entity] }),
+      );
+      this.listeningBots.add(normalized);
+      logger.info(`✅ Listener registrado para @${botUsername} (ID: ${(entity as any).id})`);
+    } catch (error) {
+      logger.error(`❌ Error registrando listener para @${botUsername}`, { error });
+    }
   }
 
   private async handleProviderMessage(event: NewMessageEvent) {
@@ -211,7 +219,7 @@ export class DirectTelegramClient {
     }
 
     const botUsername = targetBot || this.providerBotUsername;
-    this.registerBotListener(botUsername);
+    await this.registerBotListener(botUsername);
 
     const sessionId = `${userId}_${Date.now()}`;
     logger.info(`Enviando comando al bot @${botUsername}: ${command} (sesion ${sessionId.slice(0, 10)}...)`);
