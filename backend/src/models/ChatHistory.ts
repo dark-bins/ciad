@@ -199,7 +199,7 @@ export const fetchSessionHistory = async (sessionKey: string): Promise<CommandEx
     ? await query<MessageRow>(
         `SELECT id, command_execution_id, author, body, created_at
            FROM messages
-          WHERE command_execution_id IN (${executionIds.map(() => "?").join(", ")})
+          WHERE command_execution_id IN (${executionIds.map((_, i) => `$${i + 1}`).join(", ")})
           ORDER BY created_at ASC`,
         executionIds,
       )
@@ -210,7 +210,7 @@ export const fetchSessionHistory = async (sessionKey: string): Promise<CommandEx
     ? await query<AttachmentRow>(
         `SELECT id, message_id, type, url, filename, file_size, created_at
            FROM message_attachments
-          WHERE message_id IN (${messageIds.map(() => "?").join(", ")})
+          WHERE message_id IN (${messageIds.map((_, i) => `$${i + 1}`).join(", ")})
           ORDER BY created_at ASC`,
         messageIds,
       )
