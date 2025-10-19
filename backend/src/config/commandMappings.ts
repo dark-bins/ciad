@@ -132,9 +132,29 @@ export const COMMAND_MAPPINGS: CommandMappings = {
       pattern: /^\d{8}$/,
     },
   },
-  "/c4cf": {
-    providerCmd: "/c4cf",
-    description: "Ficha C4 certificada PDF",
+  "/c4c": {
+    providerCmd: "/c4c",
+    description: "Ficha RENIEC v2",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/c4i": {
+    providerCmd: "/c4i",
+    description: "Certificado electrónico RENIEC",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/dniv": {
+    providerCmd: "/dniv",
+    description: "DNI digital azul o amarillo ambas caras",
     argsFormat: "DNI (8 dígitos)",
     validation: {
       minArgs: 1,
@@ -214,11 +234,115 @@ export const COMMAND_MAPPINGS: CommandMappings = {
       pattern: /^\d{8}$/,
     },
   },
+  "/denuncias": {
+    providerCmd: "/denuncias",
+    description: "Denuncias asociadas al DNI en PDF",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/antpen": {
+    providerCmd: "/antpen",
+    description: "Antecedentes penales PDF",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/antpol": {
+    providerCmd: "/antpol",
+    description: "Antecedentes policiales PDF",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/antjud": {
+    providerCmd: "/antjud",
+    description: "Antecedentes judiciales PDF",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
 
   // ===== VEHÍCULOS =====
   "/tive": {
     providerCmd: "/tive",
     description: "Tarjeta vehicular PDF",
+    argsFormat: "Placa vehicular",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+    },
+  },
+  "/tivep": {
+    providerCmd: "/tivep",
+    description: "Tarjeta vehicular premium PDF",
+    argsFormat: "Placa vehicular",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+    },
+  },
+  "/placa": {
+    providerCmd: "/placa",
+    description: "Información placa en texto",
+    argsFormat: "Placa vehicular",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+    },
+  },
+  "/placab": {
+    providerCmd: "/placab",
+    description: "Movimientos de placa",
+    argsFormat: "Placa vehicular",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+    },
+  },
+  "/placabpdf": {
+    providerCmd: "/placabpdf",
+    description: "Movimientos de placa en PDF",
+    argsFormat: "Placa vehicular",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+    },
+  },
+  "/movplaca": {
+    providerCmd: "/movplaca",
+    description: "Historial completo de movimientos",
+    argsFormat: "Placa vehicular",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+    },
+  },
+  "/licenciapdf": {
+    providerCmd: "/licenciapdf",
+    description: "Licencia de conducir PDF",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/placadenuncias": {
+    providerCmd: "/placadenuncias",
+    description: "Denuncias por placa PDF",
     argsFormat: "Placa vehicular",
     validation: {
       minArgs: 1,
@@ -307,6 +431,203 @@ export const COMMAND_MAPPINGS: CommandMappings = {
       minArgs: 1,
       maxArgs: 1,
       pattern: /^\d{8}$/,
+    },
+  },
+
+  // ===== TELEFONÍA AURORA =====
+  "/valnum": {
+    providerCmd: "/valnum",
+    description: "Validador de teléfono",
+    argsFormat: "Número (9 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{9}$/,
+    },
+  },
+  "/valnumdni": {
+    providerCmd: "/valnumdni",
+    description: "Teléfonos por DNI",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/telx": {
+    providerCmd: "/telx",
+    description: "Consulta TELX",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/claro": {
+    providerCmd: "/claro",
+    description: "Titularidad Claro",
+    argsFormat: "Número (9 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{9}$/,
+    },
+  },
+  "/movistar": {
+    providerCmd: "/movistar",
+    description: "Titularidad Movistar",
+    argsFormat: "Número (9 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{9}$/,
+    },
+  },
+  "/serum": {
+    providerCmd: "/serum",
+    description: "Búsqueda SERUM",
+    argsFormat: "Número (9 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{9}$/,
+    },
+  },
+
+  // ===== SUNAT AURORA =====
+  "/ruc": {
+    providerCmd: "/ruc",
+    description: "RUC información en texto",
+    argsFormat: "RUC (11 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{11}$/,
+    },
+  },
+  "/rucpdf": {
+    providerCmd: "/rucpdf",
+    description: "RUC información en PDF",
+    argsFormat: "RUC (11 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{11}$/,
+    },
+  },
+  "/rucdni": {
+    providerCmd: "/rucdni",
+    description: "RUC por DNI",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+
+  // ===== SUNARP =====
+  "/bolsunarp": {
+    providerCmd: "/bolsunarp",
+    description: "Boleta SUNARP PDF",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/insunarp": {
+    providerCmd: "/insunarp",
+    description: "Propiedades SUNARP",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/tarjsunarp": {
+    providerCmd: "/tarjsunarp",
+    description: "Tarjeta SUNARP",
+    argsFormat: "Placa vehicular",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+    },
+  },
+
+  // ===== FAMILIA AURORA =====
+  "/agv": {
+    providerCmd: "/agv",
+    description: "Árbol genealógico foto",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+
+  // ===== BUSCADORES =====
+  "/seekernumeros": {
+    providerCmd: "/seekernumeros",
+    description: "Seeker números",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/seekerrun": {
+    providerCmd: "/seekerrun",
+    description: "Seeker vehículos",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/seekercorreos": {
+    providerCmd: "/seekercorreos",
+    description: "Seeker correos",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+  "/seeker": {
+    providerCmd: "/seeker",
+    description: "Seeker full",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
+    },
+  },
+
+  // ===== GENERADORES =====
+  "/yape": {
+    providerCmd: "/yape",
+    description: "Generador Yape",
+    argsFormat: "Nombre|Num|Tipo|Monto",
+    validation: {
+      minArgs: 1,
+    },
+  },
+  "/plin": {
+    providerCmd: "/plin",
+    description: "Generador Plin",
+    argsFormat: "Nombre|Num|Tipo|Monto",
+    validation: {
+      minArgs: 1,
     },
   },
 

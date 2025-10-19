@@ -68,31 +68,32 @@ const categories: CommandCategory[] = [
         tags: ["identidad", "foto"],
       },
       {
-        command: "/dnif",
-        label: "Completo",
-        provider: "telegram",
-        description: "Consulta completa - Foto + firma + huellas",
-        tags: ["identidad", "biometría"],
-        cost: 5,
-      },
-      {
-        command: "/nm",
-        label: "Búsqueda por nombres",
-        provider: "telegram",
-        description: "Retorna posibles coincidencias a partir de nombres y apellidos",
-        tags: ["identidad", "búsqueda"],
-      },
-      {
         command: "/dnivaz",
         label: "DNI Vazquez",
         provider: "telegram",
         description: "DNI digital azul o amarillo ambas caras",
         cost: 3,
       },
-      // Proveedor Aurora Data
+      // Proveedor Aurora Data (Private Data)
+      {
+        command: "/dnif",
+        label: "Reniec NV-01 (Completo)",
+        provider: "aurora",
+        description: "Información completa + 4 fotos",
+        tags: ["identidad", "biometría"],
+        cost: 5,
+      },
+      {
+        command: "/nm",
+        label: "Búsqueda por Nombres",
+        provider: "aurora",
+        description: "Retorna DNI, nombres y edad según nombres ingresados",
+        tags: ["identidad", "búsqueda"],
+        cost: 2,
+      },
       {
         command: "/dniv",
-        label: "DNI Digital",
+        label: "Reniec NV-04 (DNI Digital)",
         provider: "aurora",
         description: "DNI azul o amarillo ambas caras",
         tags: ["documento", "digital"],
@@ -107,21 +108,21 @@ const categories: CommandCategory[] = [
       },
       {
         command: "/c4a",
-        label: "Ficha Azul",
+        label: "Reniec NV-03 (Ficha Azul)",
         provider: "aurora",
         description: "Ficha RENIEC azul PDF",
         cost: 3,
       },
       {
         command: "/c4b",
-        label: "Ficha Blanca",
+        label: "Reniec NV-05 (Ficha Blanca)",
         provider: "aurora",
         description: "Ficha RENIEC blanca PDF",
         cost: 3,
       },
       {
         command: "/c4c",
-        label: "Ficha V2",
+        label: "Reniec NV-06 (Ficha V2)",
         provider: "aurora",
         description: "Ficha RENIEC v2",
         cost: 5,
@@ -307,7 +308,7 @@ const categories: CommandCategory[] = [
         provider: "telegram",
         description: "Tarjeta vehicular PDF",
       },
-      // Proveedor Aurora Data
+      // Proveedor Aurora Data (Private Data)
       {
         command: "/tivep",
         label: "Tarjeta Vehicular Premium",
@@ -326,14 +327,14 @@ const categories: CommandCategory[] = [
         command: "/placab",
         label: "Movimientos Placa",
         provider: "aurora",
-        description: "Consulta los movimientos de un vehículo",
+        description: "Consulta los movimientos de un vehículo con número de placa",
         cost: 3,
       },
       {
         command: "/placabpdf",
         label: "Movimientos PDF",
         provider: "aurora",
-        description: "Obtén los movimientos de un vehículo en PDF",
+        description: "Obtén los movimientos de un vehículo en formato PDF",
         cost: 4,
       },
       {
@@ -347,14 +348,14 @@ const categories: CommandCategory[] = [
         command: "/licenciapdf",
         label: "Licencia de Conducir PDF",
         provider: "aurora",
-        description: "Documento oficial de licencia de conducir en PDF",
+        description: "Documento oficial de licencia de conducir en PDF con información completa",
         cost: 15,
       },
       {
         command: "/placadenuncias",
         label: "Denuncias por Placa",
         provider: "aurora",
-        description: "Todas las denuncias asociadas a la placa en PDF",
+        description: "Todas las denuncias asociadas a la placa indicada en formato PDF",
         cost: 15,
       },
     ],
@@ -420,12 +421,6 @@ const categories: CommandCategory[] = [
         description: "Historial financiero SBS",
       },
       {
-        command: "/sbs",
-        label: "Reporte SBS",
-        provider: "telegram",
-        description: "Historial SBS gráfico",
-      },
-      {
         command: "/seguros",
         label: "Seguros",
         provider: "telegram",
@@ -443,7 +438,14 @@ const categories: CommandCategory[] = [
         provider: "telegram",
         description: "Historial laboral 2024",
       },
-      // Proveedor Aurora Data
+      // Proveedor Aurora Data (Private Data)
+      {
+        command: "/sbs",
+        label: "Historial Crediticio SBS",
+        provider: "aurora",
+        description: "Historial crediticio completo y reportes SBS detallados",
+        cost: 10,
+      },
       {
         command: "/ruc",
         label: "RUC Información",
@@ -475,14 +477,14 @@ const categories: CommandCategory[] = [
     icon: "🌳",
     description: "Árbol genealógico y relaciones familiares",
     commands: [
-      // Proveedor Telegram (SHKA)
+      // Proveedor Aurora Data (Private Data)
       {
         command: "/ag",
-        label: "Árbol Genealógico",
-        provider: "telegram",
-        description: "Árbol genealógico",
+        label: "Árbol Genealógico Texto",
+        provider: "aurora",
+        description: "Árbol genealógico en formato de texto",
+        cost: 8,
       },
-      // Proveedor Aurora Data
       {
         command: "/agv",
         label: "Árbol Genealógico Foto",
