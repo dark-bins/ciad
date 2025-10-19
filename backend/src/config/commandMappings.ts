@@ -74,12 +74,12 @@ export const COMMAND_MAPPINGS: CommandMappings = {
   // ===== TELEFONÍA =====
   "/tel": {
     providerCmd: "/tel",
-    description: "Consulta de números telefónicos por DNI",
-    argsFormat: "DNI (8 dígitos)",
+    description: "Consulta OPSITEL (DNI o teléfono)",
+    argsFormat: "DNI (8 dígitos) o Número (9 dígitos)",
     validation: {
       minArgs: 1,
       maxArgs: 1,
-      pattern: /^\d{8}$/,
+      pattern: /^\d{8,9}$/,
     },
   },
   "/cel": {

@@ -139,13 +139,6 @@ const categories: CommandCategory[] = [
     commands: [
       // Proveedor Telegram (SHKA)
       {
-        command: "/tel",
-        label: "Teléfonos por DNI",
-        provider: "telegram",
-        description: "Listado de líneas asociadas a un documento",
-        tags: ["telefonía", "titulares"],
-      },
-      {
         command: "/cel",
         label: "Titular por número",
         provider: "telegram",
@@ -200,6 +193,13 @@ const categories: CommandCategory[] = [
         provider: "aurora",
         description: "Titularidad BITEL en tiempo real",
         cost: 5,
+      },
+      {
+        command: "/tel",
+        label: "Consulta OPSITEL",
+        provider: "aurora",
+        description: "Información de base de datos OPSITEL",
+        cost: 4,
       },
       {
         command: "/serum",
