@@ -133,6 +133,13 @@ class TelegramCommandProvider implements BotProvider {
             return;
           }
           seenKeys.add(dedupeKey);
+
+          // Skip "loading" or "processing" images without relevant text
+          if (type === "image" && (!cleanedText || cleanedText.length < 10)) {
+            logger.debug("Skipping loading/processing image without text");
+            return;
+          }
+
           const attachment: Attachment = {
             id: randomUUID(),
             type,

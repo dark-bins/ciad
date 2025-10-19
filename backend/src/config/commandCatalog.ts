@@ -158,13 +158,7 @@ const categories: CommandCategory[] = [
         provider: "telegram",
         description: "Consulta consolidada OSIPTEL",
       },
-      {
-        command: "/bitel",
-        label: "Bitel",
-        provider: "telegram",
-        description: "Consulta titular Bitel",
-      },
-      // Proveedor Aurora Data
+      // Proveedor Aurora Data (Private Data)
       {
         command: "/valnum",
         label: "Validador Teléfono",
@@ -198,6 +192,13 @@ const categories: CommandCategory[] = [
         label: "Titularidad Movistar",
         provider: "aurora",
         description: "Titularidad Movistar en tiempo real",
+        cost: 5,
+      },
+      {
+        command: "/bitel",
+        label: "Titularidad BITEL",
+        provider: "aurora",
+        description: "Titularidad BITEL en tiempo real",
         cost: 5,
       },
       {
