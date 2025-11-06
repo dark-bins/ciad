@@ -47,63 +47,39 @@ const STATUS_EMOJIS = [
 ];
 
 // ===== PATRONES DE PUBLICIDAD Y MARCAS =====
+// NOTA: Eliminar solo branding y metadata innecesaria, mantener datos de titular
 const BRAND_PATTERNS = [
   /\[#ShizukaCloud.*?\]/gi,
-  /\[#SHKAI.*?\]/gi,
-  /\[#DATENSHI.*?\]/gi,
-  /\[#.*?\]/gi, // Cualquier hashtag en corchetes
   /ShizukaCloud/gi,
   /SHKAI\s*INFORMATION/gi,
-  /DATENSHI\s*DOX/gi,
   /@SHKAINFORMATIONASXBOT/gi,
-  /@[A-Z0-9_]+BOT/gi, // Menciones de bots
-  /\[BOT.*?\]/gi,
-  /\[SHIZUKA.*?\]/gi,
-  /\[SHKAI.*?\]/gi,
-  /SHIZUKA_TOP/gi,
-  /Yenes?/gi,
-  /UBICGEOS/gi,
-  /Proveedor\s*[:：].*$/gim,
-  /Cr[eé]ditos\s*[:：].*$/gim,
   /\[[^\]]*\]\(tg:\/\/user\?id=\d+\)/g, // Links de usuario de Telegram
-  // Nuevos patrones para Private Data
-  /❰\s*#DELUXEDATAPERUX\s*❱/gi,
-  /➣\s*DELUXEDATAPERU/gi,
-  /DELUXEDATAPERU/gi,
-  /DELUXEDATAPERUX/gi,
-  /➥\s*CONSULTADO\s+POR:/gi,
-  /CONSULTADO\s+POR:\s*USUARIO:\s*\d+/gi,
-  /USUARIO:\s*\d+/gi,
-  /NOMBRE:\s*\./gi,
-  /CR[ÉE]DITOS:\s*∞/gi,
-  /➥/g, // Flecha
-  /➣/g, // Flecha
-  /❰/g, // Bracket decorativo
-  /❱/g, // Bracket decorativo
+  // Patrones para DeluxePeru bot
+  /\[#DELUXEDATAPERU[^\]]*\]/gi,  // [#DELUXEDATAPERU ...]
+  /#DELUXEDATAPERU/gi,             // #DELUXEDATAPERU
+  /#SERUM_AVANZADO/gi,             // #SERUM_AVANZADO
+  /#[A-Z]+_INFO/gi,                // #CLARO_INFO, #MOVISTAR_INFO, etc.
+  /#[A-Z]+_AVANZADO/gi,            // #SERUM_AVANZADO, etc.
+  /\[#DELUXEDATA[^\]]*\]/gi,       // [#DELUXEDATA ...] (sin PERU)
+  /#DELUXEDATA\w*/gi,              // #DELUXEDATA*
 ];
 
 // ===== PATRONES DE MENSAJES COMPLETOS A ELIMINAR =====
+// NOTA: Eliminar líneas de branding, metadata del bot, pero mantener datos del titular
 const BLACKLISTED_MESSAGES = [
-  /^.*consultando\s+base\s+de\s+datos.*$/gim,
   /^.*espere\s+un\s+momento.*$/gim,
-  /^.*procesando\s+su\s+solicitud.*$/gim,
-  /^.*obteniendo\s+informaci[oó]n.*$/gim,
   /^.*por\s+favor\s+espere.*$/gim,
-  /^.*env[ií]a\s+tu\s+consulta.*$/gim,
   /^.*para\s+m[aá]s\s+informaci[oó]n.*$/gim,
   /^.*visita\s+nuestro.*$/gim,
   /^.*[uú]nete\s+a\s+nuestro.*$/gim,
   /^.*suscr[ií]bete.*$/gim,
   /^.*usa\s+el\s+c[oó]digo.*$/gim,
   /^.*invita\s+a\s+tus\s+amigos.*$/gim,
-  // Líneas completas de Private Data
-  /^.*❰.*#DELUXEDATAPERUX.*❱.*$/gim,
-  /^.*➣.*DELUXEDATAPERU.*$/gim,
-  /^.*➥.*CONSULTADO\s+POR:.*$/gim,
-  /^.*USUARIO:\s*\d+.*$/gim,
-  /^.*NOMBRE:\s*\..*$/gim,
-  /^.*CR[ÉE]DITOS:\s*∞.*$/gim,
-  /^.*DELUXEDATAPERU.*$/gim,
+  // Líneas específicas de branding de Private Data (SOLO metadata sin datos útiles)
+  /^.*➥\s*CONSULTADO\s+POR:\s*$/gim, // "➥ CONSULTADO POR:"
+  /^.*➪\s*USUARIO:\s*\d+\s*$/gim, // "➪ USUARIO: 7719000285"
+  /^.*➪\s*NOMBRE:\s*\.?\s*$/gim, // "➪ NOMBRE: ." o "➪ NOMBRE:"
+  /^.*➪\s*CR[ÉE]DITOS:\s*[∞\d]+\s*$/gim, // "➪ CRÉDITOS: ∞" o "➪ CRÉDITOS: 50"
 ];
 
 // ===== EMOJIS DE DECORACIÓN INNECESARIOS =====
@@ -122,21 +98,42 @@ const DECORATION_EMOJIS = [
 
 /**
  * Detecta si un mensaje es de estado y debe ser ignorado
+ * NOTA: Ser MUY conservador - solo rechazar mensajes que son PURAMENTE de estado/espera
  */
 export const isStatusMessage = (text: string | null): boolean => {
   if (!text || text.trim().length === 0) {
     return false;
   }
 
-  const lowerText = text.toLowerCase();
+  const trimmed = text.trim();
+  const lowerText = trimmed.toLowerCase();
 
-  // Verificar keywords de estado
-  if (STATUS_KEYWORDS.some((keyword) => lowerText.includes(keyword))) {
+  // NUNCA rechazar mensajes de error/sin resultados - son informativos
+  if (lowerText.includes('sin resultado') ||
+      lowerText.includes('no se encontr') ||
+      lowerText.includes('no encontrado') ||
+      lowerText.includes('❌') ||
+      lowerText.includes('error')) {
+    return false;
+  }
+
+  // Si el mensaje tiene más de 100 caracteres, probablemente tiene datos útiles
+  if (trimmed.length > 100) {
+    return false;
+  }
+
+  // Si tiene múltiples líneas, probablemente es contenido útil
+  if (trimmed.split('\n').length > 3) {
+    return false;
+  }
+
+  // Verificar keywords de estado SOLO si el mensaje es corto
+  if (trimmed.length < 50 && STATUS_KEYWORDS.some((keyword) => lowerText.includes(keyword))) {
     return true;
   }
 
-  // Verificar emojis de estado
-  if (STATUS_EMOJIS.some((emoji) => text.includes(emoji))) {
+  // Verificar emojis de estado SOLO si el mensaje es corto
+  if (trimmed.length < 50 && STATUS_EMOJIS.some((emoji) => text.includes(emoji))) {
     return true;
   }
 
@@ -308,8 +305,8 @@ export const processProviderText = (
     processed = truncateText(processed, truncate);
   }
 
-  // 5. Validar contenido útil
-  if (!hasUsefulContent(processed)) {
+  // 5. Validar que tiene contenido útil (al menos letras/números)
+  if (processed.length === 0 || !/[a-zA-Z0-9]/.test(processed)) {
     return null;
   }
 

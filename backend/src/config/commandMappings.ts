@@ -43,7 +43,7 @@ export const COMMAND_MAPPINGS: CommandMappings = {
     },
   },
   "/dnif": {
-    providerCmd: "/dnixx",
+    providerCmd: "/dnif",
     description: "Consulta RENIEC nivel 3 - Foto + firma + huellas",
     argsFormat: "DNI (8 dígitos)",
     validation: {
@@ -84,12 +84,12 @@ export const COMMAND_MAPPINGS: CommandMappings = {
   },
   "/cel": {
     providerCmd: "/celx",
-    description: "Consulta titular por número",
-    argsFormat: "Número telefónico (9 dígitos)",
+    description: "Consulta titular por número o DNI",
+    argsFormat: "DNI (8 dígitos) o Número telefónico (9 dígitos)",
     validation: {
       minArgs: 1,
       maxArgs: 1,
-      pattern: /^\d{9}$/,
+      pattern: /^\d{8,9}$/,
     },
   },
   "/osipdb": {
@@ -383,19 +383,9 @@ export const COMMAND_MAPPINGS: CommandMappings = {
   },
 
   // ===== FINANCIERO =====
-  "/finan": {
-    providerCmd: "/finan",
-    description: "Historial financiero SBS",
-    argsFormat: "DNI (8 dígitos)",
-    validation: {
-      minArgs: 1,
-      maxArgs: 1,
-      pattern: /^\d{8}$/,
-    },
-  },
-  "/sbs": {
-    providerCmd: "/sbs",
-    description: "Historial SBS gráfico",
+  "/sentinel": {
+    providerCmd: "/sentinel",
+    description: "Análisis financiero completo con Sentinel",
     argsFormat: "DNI (8 dígitos)",
     validation: {
       minArgs: 1,
@@ -628,6 +618,18 @@ export const COMMAND_MAPPINGS: CommandMappings = {
     argsFormat: "Nombre|Num|Tipo|Monto",
     validation: {
       minArgs: 1,
+    },
+  },
+
+  // ===== ACTAS =====
+  "/actn": {
+    providerCmd: "/actana",
+    description: "Acta de nacimiento oficial PDF",
+    argsFormat: "DNI (8 dígitos)",
+    validation: {
+      minArgs: 1,
+      maxArgs: 1,
+      pattern: /^\d{8}$/,
     },
   },
 

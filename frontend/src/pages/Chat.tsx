@@ -25,9 +25,45 @@ const AttachmentBlock = ({ attachment }: { attachment: NonNullable<ChatMessage["
     );
   }
 
+  // Para PDFs, mostrar visor embebido
+  if (attachment.mimeType === "application/pdf") {
+    return (
+      <div className="pdf-viewer-container">
+        <iframe
+          src={attachment.url}
+          title={attachment.filename ?? "Documento PDF"}
+          className="pdf-viewer"
+          style={{
+            width: "100%",
+            height: "600px",
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+          }}
+        />
+        <div className="pdf-download-link">
+          <a href={attachment.url} download={attachment.filename ?? "documento.pdf"}>
+            📥 Descargar {attachment.filename ?? "PDF"}
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Para archivos de texto, permitir visualización y descarga
+  if (attachment.mimeType === "text/plain") {
+    return (
+      <div className="text-file-container">
+        <a className="attachment-link" href={attachment.url} download={attachment.filename ?? "archivo.txt"}>
+          📄 {attachment.filename ?? "Descargar archivo de texto"}
+        </a>
+      </div>
+    );
+  }
+
+  // Para otros tipos de documentos
   return (
-    <a className="attachment-link" href={attachment.url} target="_blank" rel="noreferrer">
-      {attachment.filename ?? "Abrir adjunto"}
+    <a className="attachment-link" href={attachment.url} download={attachment.filename ?? "adjunto"}>
+      📎 {attachment.filename ?? "Descargar adjunto"}
     </a>
   );
 };

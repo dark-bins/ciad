@@ -6,6 +6,7 @@ export interface Attachment {
   url: string;
   filename?: string;
   caption?: string;
+  mimeType?: string;
 }
 
 export interface ChatMessage {

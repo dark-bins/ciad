@@ -35,6 +35,20 @@ const detectMimeFromBuffer = (buffer: Buffer): { mime: string; type: Attachment[
   if (hex.startsWith("25504446")) {
     return { mime: "application/pdf", type: "document" };
   }
+
+  // Detectar archivos de texto (por contenido ASCII)
+  try {
+    const text = buffer.toString('utf-8', 0, Math.min(512, buffer.length));
+    // Si más del 95% son caracteres imprimibles ASCII/UTF-8, es probablemente texto
+    const printable = text.split('').filter(c => {
+      const code = c.charCodeAt(0);
+      return (code >= 32 && code <= 126) || code === 10 || code === 13 || code === 9 || code > 127;
+    }).length;
+    if (printable / text.length > 0.95) {
+      return { mime: "text/plain", type: "document" };
+    }
+  } catch {}
+
   return null;
 };
 
@@ -42,24 +56,46 @@ const mapMediaType = (
   mediaType: string | null,
   buffer?: Buffer,
 ): { type: Attachment["type"]; mime: string } | null => {
+  // PRIORIDAD 1: Usar mediaType de Telegram (más confiable)
+  if (mediaType) {
+    // Imágenes
+    if (mediaType.includes("photo") || mediaType.includes("image")) {
+      return { type: "image", mime: mediaType.includes("png") ? "image/png" : DEFAULT_IMAGE_MIME };
+    }
+    // PDFs específicamente
+    if (mediaType.includes("pdf")) {
+      return { type: "document", mime: "application/pdf" };
+    }
+    // Archivos de texto
+    if (mediaType.includes("text/plain") || mediaType.includes("text/")) {
+      return { type: "document", mime: "text/plain" };
+    }
+    // Videos
+    if (mediaType.includes("video")) {
+      return { type: "video", mime: "video/mp4" };
+    }
+    // Audio
+    if (mediaType.includes("audio")) {
+      return { type: "audio", mime: "audio/mpeg" };
+    }
+    // Documentos genéricos (application/*)
+    if (mediaType.includes("application/")) {
+      return { type: "document", mime: mediaType };
+    }
+  }
+
+  // PRIORIDAD 2: Detectar por contenido del buffer (fallback)
   if (buffer) {
     const detected = detectMimeFromBuffer(buffer);
     if (detected) return detected;
   }
-  if (!mediaType) return null;
-  if (mediaType.includes("photo") || mediaType.includes("image")) {
-    return { type: "image", mime: DEFAULT_IMAGE_MIME };
-  }
-  if (mediaType.includes("document") || mediaType.includes("pdf")) {
+
+  // PRIORIDAD 3: Default para "document" genérico
+  if (mediaType && mediaType.includes("document")) {
     return { type: "document", mime: DEFAULT_DOCUMENT_MIME };
   }
-  if (mediaType.includes("video")) {
-    return { type: "video", mime: "video/mp4" };
-  }
-  if (mediaType.includes("audio")) {
-    return { type: "audio", mime: "audio/mpeg" };
-  }
-  return { type: "document", mime: DEFAULT_DOCUMENT_MIME };
+
+  return null;
 };
 
 /**
@@ -89,18 +125,24 @@ class DirectTelegramProvider implements BotProvider {
   }
 
   private mapResponses(responses: TelegramMessage[], command: string): ChatMessage[] {
+    logger.info(`🔍 DirectTelegramProvider.mapResponses: Procesando ${responses.length} respuestas para ${command}`);
     const messages: ChatMessage[] = [];
     const seenKeys = new Set<string>();
 
-    responses.forEach((response) => {
+    responses.forEach((response, index) => {
+      logger.info(`🔍 Respuesta #${index + 1}: texto="${response.text?.slice(0, 100)}", hasMedia=${Boolean(response.media)}`);
       const timestamp = new Date().toISOString();
       const cleanedText = this.cleanText(response.text);
+      logger.info(`🧹 Después de cleanText: "${cleanedText?.slice(0, 100)}"`);
 
       if (response.media) {
         if (Buffer.isBuffer(response.media)) {
           const mapping = mapMediaType(response.mediaType, response.media);
           const type = mapping?.type ?? "image";
           const mime = mapping?.mime ?? DEFAULT_IMAGE_MIME;
+
+          logger.info(`📎 Archivo detectado - mediaType original: "${response.mediaType}", MIME detectado: "${mime}", tipo: "${type}"`);
+
           const hash = createHash("sha1").update(response.media).digest("hex");
           const dedupeKey = `${type}::${hash}::${cleanedText ?? ""}`;
 
@@ -108,6 +150,13 @@ class DirectTelegramProvider implements BotProvider {
             return;
           }
           seenKeys.add(dedupeKey);
+
+          // Filtrar imágenes promocionales de DELUXEDATA (imagen roja con capucha)
+          // Estas imágenes suelen venir sin texto útil o con texto muy corto
+          if (type === "image" && (!cleanedText || cleanedText.length < 20)) {
+            logger.info(`⏭️ Saltando imagen promocional sin contenido útil (texto: "${cleanedText}")`);
+            return;
+          }
 
           const attachment: Attachment = {
             id: randomUUID(),
@@ -117,7 +166,18 @@ class DirectTelegramProvider implements BotProvider {
           };
 
           if (type === "document") {
-            attachment.filename = response.filename || `adjunto_${Date.now()}.pdf`;
+            // Determinar extensión correcta según MIME type
+            let extension = "bin";
+            if (mime === "application/pdf") {
+              extension = "pdf";
+            } else if (mime === "text/plain") {
+              extension = "txt";
+            } else if (mime.startsWith("application/")) {
+              extension = mime.split("/")[1] || "bin";
+            }
+
+            attachment.filename = response.filename || `documento_${Date.now()}.${extension}`;
+            logger.info(`📄 Documento: ${attachment.filename} (${mime})`);
           }
 
           messages.push({
@@ -147,7 +207,10 @@ class DirectTelegramProvider implements BotProvider {
       }
     });
 
+    logger.info(`📊 Total mensajes creados: ${messages.length} de ${responses.length} respuestas`);
+
     if (messages.length === 0) {
+      logger.warn(`⚠️ TODAS las respuestas fueron filtradas por cleanText. Enviando mensaje de error.`);
       messages.push({
         id: randomUUID(),
         author: "provider",

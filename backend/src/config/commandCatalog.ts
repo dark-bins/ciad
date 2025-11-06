@@ -47,7 +47,7 @@ const providers: CommandProviderInfo[] = [
     description: "Proveedor premium con comandos avanzados y generadores",
     accentColor: "#22d3ee",
     badge: "Premium",
-    telegramBot: "DELUXEDATAA_BOT",
+    telegramBot: "DeluxePeru_bot",
   },
 ];
 
@@ -416,12 +416,6 @@ const categories: CommandCategory[] = [
     commands: [
       // Proveedor Telegram (SHKA)
       {
-        command: "/finan",
-        label: "Información Financiera",
-        provider: "telegram",
-        description: "Historial financiero SBS",
-      },
-      {
         command: "/seguros",
         label: "Seguros",
         provider: "telegram",
@@ -441,11 +435,11 @@ const categories: CommandCategory[] = [
       },
       // Proveedor Aurora Data (Private Data)
       {
-        command: "/sbs",
-        label: "Historial Crediticio SBS",
+        command: "/sentinel",
+        label: "Sentinel Financiero",
         provider: "aurora",
-        description: "Historial crediticio completo y reportes SBS detallados",
-        cost: 10,
+        description: "Análisis financiero completo con Sentinel",
+        cost: 15,
       },
       {
         command: "/ruc",
@@ -558,6 +552,23 @@ const categories: CommandCategory[] = [
         provider: "aurora",
         description: "Generador de capturas Plin/Yape/Agora/BIM",
         cost: 2,
+      },
+    ],
+  },
+
+  // ========== ACTAS ==========
+  {
+    id: "actas",
+    title: "ACTAS",
+    icon: "📜",
+    description: "Actas de nacimiento, matrimonio y defunción",
+    commands: [
+      {
+        command: "/actn",
+        label: "Acta de Nacimiento",
+        provider: "aurora",
+        description: "Acta de nacimiento oficial en formato PDF",
+        cost: 20,
       },
     ],
   },
